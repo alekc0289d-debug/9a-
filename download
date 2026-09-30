@@ -1,1 +1,20 @@
-"""Utils paketi."""
+EMAKTAB_LOGIN_URL=https://login.emaktab.uz/login/
+EMAKTAB_HOME_URL=https://emaktab.uz/
+EMAKTAB_ENC_KEY=64_hex_characters_here
+FIREBASE_CREDENTIALS=etc/secrets/firebase-service-account.json
+SYNC_BATCH_SIZE=30
+CHROME_HEADLESS=true
+CLASS_ID=9-A
+
+# Ixtiyoriy — agar ddddocr yetmasa
+TWOCAPTCHA_API_KEY=
+
+# API server (api_server.py)
+API_ADMIN_TOKEN=vc8DtXZ4v-0Od-s_ELLuh9YIqd1fSwkJJiJaCuyZkRY   # python -c "import secrets; print(secrets.token_urlsafe(32))"
+ALLOWED_ORIGINS=https://school-65-uz.netlify.app
+PORT=8000
+
+# Telegram bot
+BOT_TOKEN=8828219566:AAFU9luhAkgHgdEN94apwQ6aiIgChf3OREU
+ADMIN_TG_ID=6318021745
+GROQ_API_KEY=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
