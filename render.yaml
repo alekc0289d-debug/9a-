@@ -1,0 +1,72 @@
+# Render.com uchun tayyor konfiguratsiya (Blueprint).
+# Render dashboardida "New +" -> "Blueprint" -> shu repo'ni tanlang.
+#
+# Nega Render: bot doimo ishlab turishi kerak (polling + scheduler),
+# Railway'ning bepul sinovi 30 kunda tugaydi va undan keyin to'lov
+# talab qiladi. Render'ning "Background Worker" xizmati aynan shu
+# turdagi jarayonlar uchun mo'ljallangan va narxi doimiy (o'zgarmaydi).
+#
+# environment o'zgaruvchilarini (BOT_TOKEN, FIREBASE_CREDENTIALS_JSON
+# va h.k.) Render dashboardida qo'lda kiritish kerak — bu faylda
+# ularning FAQAT nomlari ko'rsatilgan, qiymatlari emas.
+
+services:
+  # 1) Telegram bot + barcha schedulerlar (doimiy ishlaydi, uxlamaydi)
+  - type: worker
+    name: maktab-bot
+    runtime: python
+    plan: starter  # eng arzon "har doim yoniq" reja (~$7/oy)
+    buildCommand: pip install -r requirements.txt
+    startCommand: python run_bot.py
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: ADMIN_TG_ID
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: EMAKTAB_LOGIN_URL
+        sync: false
+      - key: EMAKTAB_HOME_URL
+        sync: false
+      - key: EMAKTAB_ENC_KEY
+        sync: false
+      - key: FIREBASE_CREDENTIALS
+        value: /etc/secrets/firebase-service-account.json
+      - key: CLASS_ID
+        sync: false
+      - key: CHROME_HEADLESS
+        value: "true"
+
+  # 2) Ro'yxatdan o'tish API (FastAPI) — bepul rejada ham ishlaydi,
+  #    faqat 15 daqiqa harakatsizlikdan keyin "uxlab qoladi" va birinchi
+  #    so'rovga sekinroq javob beradi (bir martalik "uyg'onish").
+  - type: web
+    name: maktab-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python api_server.py
+    envVars:
+      - key: PORT
+        value: "8000"
+      - key: API_ADMIN_TOKEN
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: EMAKTAB_LOGIN_URL
+        sync: false
+      - key: EMAKTAB_HOME_URL
+        sync: false
+      - key: EMAKTAB_ENC_KEY
+        sync: false
+      - key: FIREBASE_CREDENTIALS
+        value: /etc/secrets/firebase-service-account.json
+      - key: CLASS_ID
+        sync: false
+      - key: CHROME_HEADLESS
+        value: "true"
+
+# Eslatma: firebase-service-account.json faylini Render dashboardida
+# "Secret Files" bo'limiga /etc/secrets/firebase-service-account.json
+# nomi bilan yuklang (ikkala xizmat uchun ham).
